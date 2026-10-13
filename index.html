@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>港盾 GANG DUN · 港漂青年 AI 防诈护盾</title>
+<meta name="description" content="港盾：面向在港青年与港漂的 AI 防诈护盾。AI 骗术识破、信任人双锁联保、傀儡户口健康度监测，配套反诈训练小游戏。">
+<meta property="og:title" content="港盾 GANG DUN · 3 秒识破，守住你的香港账户">
+<meta property="og:description" content="AI Copilot 截图识破骗术 · 大额转账信任人联保 · 傀儡户口洗钱预警">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ============ 基础 ============ */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0A1122; --panel:#111B31; --panel-2:#16223C;
+  --line:rgba(255,255,255,.10); --line-soft:rgba(255,255,255,.06);
+  --paper:#F4F1EA; --paper-ink:#131A2B;
+  --red:#E23A2E; --red-soft:#FF6B5E;
+  --gold:#E7C46A; --jade:#3FD0A8; --blue:#6E9BFF;
+  --txt:#EAF0FA; --muted:#94A3BC;
+  --serif:"Noto Serif SC",serif;
+  --sans:"Noto Sans SC","PingFang HK","Microsoft YaHei",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--txt);font-family:var(--sans);line-height:1.75;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit}
+.wrap{width:min(1180px,92vw);margin:0 auto}
+.hidden{display:none !important}
+.mono{font-family:var(--mono)}
+.tag{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.14em;
+  padding:4px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+.num{font-family:var(--mono);font-weight:700;font-variant-numeric:tabular-nums}
+
+/* ============ 顶部电报条 ============ */
+.ticker{background:var(--red);color:#fff;font-family:var(--mono);font-size:12.5px;
+  letter-spacing:.06em;overflow:hidden;white-space:nowrap;padding:8px 0;position:relative;z-index:60}
+.ticker__inner{display:inline-flex;gap:48px;animation:slide 38s linear infinite;padding-left:20px}
+@keyframes slide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ============ 导航 ============ */
+.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
+  background:rgba(10,17,34,.82);border-bottom:1px solid var(--line)}
+.nav__row{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 0}
+.brand{display:flex;align-items:center;gap:12px;font-family:var(--serif);font-size:22px;font-weight:900;letter-spacing:.04em}
+.brand small{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--muted);font-weight:400}
+.nav__links{display:flex;gap:26px;font-size:14px}
+.nav__links a{color:var(--muted);text-decoration:none;transition:.2s;position:relative}
+.nav__links a:hover{color:#fff}
+.nav__links a:hover::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;background:var(--red)}
+.btn{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:15px;
+  padding:13px 26px;border-radius:2px;border:1px solid transparent;cursor:pointer;
+  text-decoration:none;transition:.22s;font-family:var(--sans)}
+.btn--red{background:var(--red);color:#fff}
+.btn--red:hover{background:var(--red-soft);transform:translateY(-2px)}
+.btn--ghost{border-color:var(--line);color:var(--txt);background:transparent}
+.btn--ghost:hover{border-color:var(--gold);color:var(--gold)}
+.btn--dark{background:var(--paper-ink);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* ============ 首屏 ============ */
+.hero{position:relative;overflow:hidden;padding:84px 0 70px;
+  background:radial-gradient(1100px 520px at 78% 12%,rgba(226,58,46,.16),transparent 62%),
+             radial-gradient(900px 500px at 8% 92%,rgba(110,155,255,.12),transparent 60%)}
+.hero__grid{display:grid;grid-template-columns:1.06fr .94fr;gap:56px;align-items:center}
+.hero h1{font-family:var(--serif);font-size:clamp(38px,5.4vw,68px);line-height:1.12;font-weight:900;letter-spacing:.01em}
+.hero h1 .hl{color:var(--red);position:relative;white-space:nowrap}
+.hero h1 .hl::after{content:"";position:absolute;left:0;right:0;bottom:6px;height:9px;
+  background:rgba(226,58,46,.22);z-index:-1}
+.hero p.lead{margin:22px 0 10px;font-size:18px;color:#C9D5E8;max-width:33em}
+.hero .sub{color:var(--muted);font-size:15px}
+.hero__cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:42px;border-top:1px solid var(--line);padding-top:26px}
+.stat .num{font-size:32px;color:var(--gold);display:block;line-height:1.2}
+.stat span:last-child{font-size:13px;color:var(--muted)}
+
+/* 首屏控制台卡片 */
+.console{background:linear-gradient(180deg,var(--panel),#0D1729);border:1px solid var(--line);
+  border-radius:6px;padding:22px;position:relative;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.5)}
+.console::before{content:"";position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--red),transparent);animation:scan 4.6s ease-in-out infinite}
+@keyframes scan{0%{top:0;opacity:0}12%{opacity:1}88%{opacity:1}100%{top:100%;opacity:0}}
+.console__head{display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;color:var(--muted);
+  border-bottom:1px solid var(--line-soft);padding-bottom:12px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--jade);display:inline-block;margin-right:7px}
+.callcard{margin:18px 0;padding:16px;border:1px dashed rgba(226,58,46,.45);background:rgba(226,58,46,.07);border-radius:4px}
+.callcard .who{font-family:var(--mono);font-size:12px;color:var(--red-soft);letter-spacing:.12em}
+.callcard .msg{font-size:15px;margin-top:8px;line-height:1.7}
+.risk{margin:16px 0}
+.risk .bar{height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}
+.risk .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--red));transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.risk .lbl{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-bottom:8px}
+.report{border-top:1px solid var(--line-soft);padding-top:14px;font-size:13.5px}
+.report .row{display:flex;gap:12px;padding:7px 0;border-bottom:1px solid var(--line-soft);animation:fade .45s ease both}
+.report .row b{min-width:72px;color:var(--gold);font-weight:500;font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;padding-top:3px}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ============ 通用区块 ============ */
+section{padding:96px 0;position:relative}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:30px;
+  border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:46px;flex-wrap:wrap}
+.sec-head h2{font-family:var(--serif);font-size:clamp(28px,3.6vw,44px);line-height:1.25;font-weight:900}
+.sec-head p{color:var(--muted);max-width:36em;font-size:15px}
+.sec-idx{font-family:var(--mono);color:var(--red);font-size:13px;letter-spacing:.24em;display:block;margin-bottom:10px}
+.light{background:var(--paper);color:var(--paper-ink)}
+.light .sec-head{border-color:rgba(19,26,43,.14)}
+.light .sec-head p{color:#5A6478}
+.light .tag{border-color:rgba(19,26,43,.16);color:#5A6478}
+
+/* 痛点卡 */
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:26px;transition:.25s;position:relative;overflow:hidden}
+.card:hover{transform:translateY(-5px);border-color:rgba(226,58,46,.5);background:var(--panel-2)}
+.card h3{font-size:19px;margin:14px 0 10px;font-weight:700}
+.card p{font-size:14px;color:#B9C6DA;line-height:1.8}
+.card .idx{font-family:var(--mono);font-size:12px;color:var(--red);letter-spacing:.2em}
+.card .cn{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.1em;margin-top:14px;display:block}
+.light .card{background:#fff;border-color:rgba(19,26,43,.10);color:var(--paper-ink)}
+.light .card p{color:#5A6478}
+.light .card:hover{border-color:var(--red);background:#fff}
+
+/* 功能区 */
+.feature{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center;margin-bottom:88px}
+.feature:last-child{margin-bottom:0}
+.feature h3{font-family:var(--serif);font-size:30px;margin:12px 0 16px;line-height:1.35}
+.feature p{color:#B9C6DA;font-size:15.5px}
+.light .feature p{color:#5A6478}
+.checks{margin-top:22px;list-style:none;display:grid;gap:11px}
+.checks li{position:relative;padding-left:28px;font-size:14.5px;color:#C7D3E6}
+.light .checks li{color:#414B5F}
+.checks li::before{content:"";position:absolute;left:0;top:9px;width:12px;height:12px;
+  border:2px solid var(--jade);border-radius:2px}
+.demo{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:24px}
+.light .demo{background:#fff;border-color:rgba(19,26,43,.12)}
+.field{margin:16px 0}
+.field label{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;
+  letter-spacing:.1em;color:var(--muted);margin-bottom:9px}
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:5px;border-radius:99px;
+  background:rgba(255,255,255,.12);outline:none}
+.light input[type=range]{background:rgba(19,26,43,.14)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:var(--red);cursor:pointer;border:3px solid var(--ink);box-shadow:0 2px 10px rgba(226,58,46,.5)}
+.meter{height:12px;border-radius:99px;background:rgba(255,255,255,.09);overflow:hidden;margin:12px 0 8px}
+.meter i{display:block;height:100%;width:0;transition:width .35s ease;background:var(--jade)}
+.verdict{font-family:var(--mono);font-size:12px;letter-spacing:.12em;padding:9px 13px;border-radius:3px;
+  border:1px solid var(--line);display:inline-block;margin-top:6px}
+.steps{display:grid;gap:10px;margin:18px 0}
+.step{display:flex;gap:14px;align-items:flex-start;padding:13px;border:1px solid var(--line);
+  border-radius:4px;opacity:.42;transition:.35s;font-size:13.5px}
+.step.on{opacity:1;border-color:var(--jade);background:rgba(63,208,168,.08)}
+.step .k{font-family:var(--mono);font-size:11px;color:var(--gold);padding-top:3px}
+
+/* 技术架构 */
+.arch{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:10px}
+.arch .node{background:#fff;border:1px solid rgba(19,26,43,.12);border-radius:5px;padding:22px}
+.arch .node h4{font-size:16.5px;margin:10px 0 8px}
+.arch .node p{font-size:13.5px;color:#5A6478}
+.flow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:26px 0 6px;
+  font-family:var(--mono);font-size:12px;letter-spacing:.08em}
+.flow span{padding:9px 15px;border:1px solid rgba(19,26,43,.18);border-radius:3px;background:#fff}
+.flow em{font-style:normal;color:var(--red)}
+
+/* ============ 小游戏 ============ */
+.game-shell{background:linear-gradient(160deg,#101A2E,#0B1428 40%);border:1px solid var(--line);
+  border-radius:8px;padding:30px;position:relative;overflow:hidden;
+  background-image:radial-gradient(700px 320px at 85% 0%,rgba(226,58,46,.14),transparent 60%)}
+.hud{display:flex;gap:22px;flex-wrap:wrap;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:20px;font-family:var(--mono);font-size:12px}
+.hud .item{color:var(--muted);letter-spacing:.12em}
+.hud .item b{display:block;font-size:22px;color:#fff;letter-spacing:.02em;margin-top:3px}
+.hud .item b.red{color:var(--red-soft)}
+.hud .item b.gold{color:var(--gold)}
+.timebar{height:6px;background:rgba(255,255,255,.10);border-radius:99px;overflow:hidden;margin-bottom:22px}
+.timebar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--jade),var(--gold),var(--red));transition:width .12s linear}
+.script{background:rgba(255,255,255,.045);border-left:3px solid var(--red);padding:16px 18px;border-radius:0 4px 4px 0;margin-bottom:18px}
+.script .line{font-size:14.5px;color:#CBD7E9;padding:5px 0;display:flex;gap:12px}
+.script .line span{font-family:var(--mono);font-size:11px;color:var(--muted);min-width:56px;padding-top:4px}
+.q-title{font-family:var(--serif);font-size:22px;margin:6px 0 18px;line-height:1.5}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opt{text-align:left;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:5px;
+  padding:16px 18px;cursor:pointer;transition:.2s;color:var(--txt);font-family:var(--sans);font-size:14.5px;line-height:1.65}
+.opt:hover{border-color:var(--gold);transform:translateY(-3px);background:rgba(231,196,106,.10)}
+.opt .k{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:.14em;display:block;margin-bottom:6px}
+.opt.right{border-color:var(--jade);background:rgba(63,208,168,.16)}
+.opt.wrong{border-color:var(--red);background:rgba(226,58,46,.16)}
+.opt.dim{opacity:.38}
+.feedback{margin-top:18px;padding:18px;border-radius:5px;border:1px solid var(--line);background:rgba(255,255,255,.05);font-size:14px;line-height:1.85}
+.feedback .verdict-big{font-family:var(--serif);font-size:19px;margin-bottom:8px}
+.feedback .why{color:#B9C6DA}
+.feedback .law{margin-top:12px;font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--gold);
+  border-top:1px dashed var(--line);padding-top:11px}
+.result{text-align:center;padding:16px 0}
+.seal{width:150px;height:150px;margin:0 auto 22px;border-radius:50%;border:3px solid var(--gold);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  box-shadow:0 0 0 8px rgba(231,196,106,.12),0 18px 50px rgba(0,0,0,.5);animation:pop .6s cubic-bezier(.2,1.2,.3,1) both}
+@keyframes pop{from{transform:scale(.7) rotate(-12deg);opacity:0}to{transform:none;opacity:1}}
+.seal .lv{font-family:var(--serif);font-size:26px;font-weight:900;color:var(--gold);line-height:1.2}
+.seal .sc{font-family:var(--mono);font-size:12px;letter-spacing:.18em;color:var(--muted);margin-top:4px}
+.review{display:grid;gap:10px;margin:26px 0;text-align:left}
+.review .r{display:flex;gap:14px;padding:13px 16px;border:1px solid var(--line);border-radius:4px;font-size:13.5px;align-items:flex-start}
+.review .r .m{font-family:var(--mono);font-size:11px;letter-spacing:.1em;min-width:58px;padding-top:4px}
+.review .r.ok .m{color:var(--jade)} .review .r.no .m{color:var(--red-soft)}
+.review .r .t{color:#C6D2E4;line-height:1.7}
+
+/* ============ 生态 / 时间线 / 表格 ============ */
+.chips{display:flex;flex-wrap:wrap;gap:11px}
+.chip{padding:11px 18px;border:1px solid rgba(19,26,43,.16);border-radius:999px;font-size:13.5px;background:#fff}
+.chip b{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--red);margin-right:8px}
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:12px}
+.tl{border-top:3px solid var(--red);padding-top:18px}
+.tl .ph{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;color:var(--red)}
+.tl h4{font-size:18px;margin:9px 0 10px}
+.tl p{font-size:13.5px;color:#B9C6DA}
+table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}
+th,td{text-align:left;padding:15px 14px;border-bottom:1px solid var(--line)}
+th{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);font-weight:500}
+td b{color:var(--gold)}
+.light th{color:#6B7488;border-color:rgba(19,26,43,.12)}
+.light td{border-color:rgba(19,26,43,.10)}
+.light td b{color:var(--red)}
+.help{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.help .h{background:#fff;border:1px solid rgba(19,26,43,.12);border-radius:5px;padding:24px}
+.help .h .big{font-family:var(--mono);font-size:34px;font-weight:700;color:var(--red);line-height:1.2}
+.help .h h4{margin:10px 0 8px;font-size:17px}
+.help .h p{font-size:13.5px;color:#5A6478}
+
+footer{border-top:1px solid var(--line);padding:52px 0 42px;font-size:13px;color:var(--muted)}
+.foot{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:flex-start}
+.disclaim{border:1px dashed rgba(226,58,46,.4);background:rgba(226,58,46,.07);padding:16px 18px;
+  border-radius:4px;font-size:12.5px;line-height:1.85;max-width:46em;color:#D9C0BC}
+
+/* ============ 响应式 ============ */
+@media(max-width:1000px){
+  .hero__grid,.feature{grid-template-columns:1fr;gap:38px}
+  .grid-4,.arch,.help{grid-template-columns:1fr 1fr}
+  .timeline{grid-template-columns:1fr 1fr}
+  .nav__links{display:none}
+}
+@media(max-width:620px){
+  section{padding:64px 0}
+  .grid-4,.arch,.help,.timeline,.opts{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr}
+  .hud{gap:14px}
+  .hero{padding:52px 0}
+}
+</style>
+</head>
+<body>
+
+<!-- 骗术样本电报条 -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker__inner" id="ticker">
+    <span>常见话术样本 ·「这里是入境事务处，你的签证有问题」</span>
+    <span>「把你的银行户口借我代收货款，佣金 8%」</span>
+    <span>「业主在国外，先付两个月押金才能看房」</span>
+    <span>「老师带你买虚拟货币，稳赚不赔」</span>
+    <span>「不要告诉任何人，否则影响你的居留」</span>
+    <span>反诈骗协调中心热线 18222 · 紧急报警 999</span>
+  </div>
+</div>
+
+<!-- 导航 -->
+<header class="nav">
+  <div class="wrap nav__row">
+    <div class="brand">
+      <svg width="26" height="30" viewBox="0 0 24 28" fill="none" aria-hidden="true">
+        <path d="M12 1.5 22 5.4v8.2c0 6.3-4.1 11.1-10 12.9C6.1 24.7 2 19.9 2 13.6V5.4L12 1.5Z" stroke="#E23A2E" stroke-width="2"/>
+        <path d="M7.4 13.6 10.6 17l6-6.6" stroke="#E7C46A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div>港盾<small>GANG DUN · ANTI-FRAUD</small></div>
+    </div>
+    <nav class="nav__links">
+      <a href="#pain">痛点</a><a href="#core">核心功能</a><a href="#tech">技术架构</a>
+      <a href="#game">拆弹行动</a><a href="#eco">生态合力</a><a href="#biz">商业价值</a><a href="#help">求助资源</a>
+    </nav>
+    <a href="#game" class="btn btn--red">立即试玩</a>
+  </div>
+</header>
+
+<main>
+
+<!-- ===== 首屏 ===== -->
+<section class="hero" id="hero">
+  <div class="wrap hero__grid">
+    <div>
+      <span class="tag">工行杯参赛作品 · CONCEPT PROTOTYPE</span>
+      <h1 style="margin-top:20px">骗子要你 <span class="hl">3 秒转钱</span><br>我们给你 3 秒识破。</h1>
+      <p class="lead">港盾是面向在港青年与「港漂」的 AI 防诈护盾：把「事后报警」变成「事前阻断」，把「单打独斗」变成「信任人联防」。</p>
+      <p class="sub">AI 骗术剖析 Copilot · 大额转账信任人双锁联保 · 傀儡户口洗钱风险监测 · 反诈拆弹训练</p>
+      <div class="hero__cta">
+        <a href="#game" class="btn btn--red">开始「拆弹行动」</a>
+        <a href="#core" class="btn btn--ghost">查看三大核心功能</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><span class="num">18222</span><span>香港反诈骗协调中心热线（24 小时）</span></div>
+        <div class="stat"><span class="num">3s</span><span>截图/粘贴对话 → 骗术剖析报告</span></div>
+        <div class="stat"><span class="num">2h</span><span>大额转账冷静期 + 信任人联保</span></div>
+      </div>
+    </div>
+
+    <!-- 交互 Demo：AI 识破（上传截图 / 粘贴对话 → 真实调用后端 AI） -->
+    <div class="console">
+      <div class="console__head">
+        <span><span class="dot"></span>AI FRAUD COPILOT · DEMO</span>
+        <span>ON-DEVICE + LLM</span>
+      </div>
+      <div class="callcard">
+        <div class="who">CASE INPUT · 上传截图 或 粘贴对话</div>
+        <div class="msg" style="padding:0">
+          <label class="btn btn--ghost" for="copilotFile" style="cursor:pointer;display:inline-block;font-size:13px;padding:9px 18px">＋ 上传截图</label>
+          <input type="file" id="copilotFile" accept="image/png,image/jpeg,image/webp" style="display:none">
+          <img id="copilotPreview" alt="待分析截图预览" style="display:none;width:100%;border-radius:4px;margin:12px 0 0">
+          <textarea id="copilotText" rows="4" placeholder="或直接粘贴可疑对话 / 短信 / 来电记录…" style="width:100%;margin-top:12px;padding:10px 12px;border-radius:4px;border:1px solid rgba(226,58,46,.35);background:rgba(255,255,255,.05);color:#EAF0FA;font-size:14px;line-height:1.8;resize:vertical;font-family:var(--sans)"></textarea>
+          <p style="margin-top:10px;font-size:11.5px;line-height:1.8;color:#94A3BC">请勿上传含身份证号、银行账号、密码的截图。上传内容仅用于本次风险分析并可能发送至第三方 AI 服务，本站不作保存。</p>
+        </div>
+      </div>
+      <div class="risk">
+        <div class="lbl"><span>风险评分 RISK SCORE</span><span class="mono" id="copilotScore">--</span></div>
+        <div class="bar"><i id="copilotBar"></i></div>
+      </div>
+      <button class="btn btn--red" id="copilotBtn" style="width:100%;justify-content:center">一键识破 · 生成剖析报告</button>
+      <div class="report" id="copilotOut" style="margin-top:16px">
+        <div class="row" style="opacity:.5"><b>等待</b><span>上传截图或粘贴对话，3 秒生成骗术剖析报告。</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 痛点 ===== -->
+<section id="pain">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="sec-idx">01 / PAIN POINTS</span>
+        <h2>不只是「假冒官员」：<br>港漂正在面对的四类隐蔽陷阱</h2>
+      </div>
+      <p>以下为香港社会近年高发、且专门针对青年与内地来港群体的骗术类型。页面数据为量级参考，正式提交前请以香港警务处、立法会及金管局最新公报为准。</p>
+    </div>
+    <div class="grid-4">
+      <div class="card">
+        <span class="idx">01</span>
+        <h3>傀儡户口陷阱</h3>
+        <p>以「高薪兼职」「代收货款」「代缴学费」为名，诱骗学生出租或出售自己的银行账户。当事人可能在不知情下沦为洗钱工具，面临刑事检控与终身金融黑名单。</p>
+        <span class="cn">MULE ACCOUNTS / MONEY LAUNDERING</span>
+      </div>
+      <div class="card">
+        <span class="idx">02</span>
+        <h3>假冒官员 + 远程控制</h3>
+        <p>冒充入境处、公检法、快递、银行客服，以「涉嫌犯罪」制造恐慌，要求转账至「安全账户」或安装屏幕共享 App「配合调查」。</p>
+        <span class="cn">IMPERSONATION / REMOTE ACCESS</span>
+      </div>
+      <div class="card">
+        <span class="idx">03</span>
+        <h3>租房与换汇陷阱</h3>
+        <p>「业主在外地」要求先付押金；私人换汇给出超优汇率、先款后失联。金额常达数万至二十万港元，正好卡在学生心理防线之外。</p>
+        <span class="cn">RENTAL &amp; FX SCAMS</span>
+      </div>
+      <div class="card">
+        <span class="idx">04</span>
+        <h3>假专才 / 杀猪盘</h3>
+        <p>以「续签指导」「创业搭子」「投资导师」包装，收取高额咨询费或引导至虚假投资平台，长期经营信任后一次性收割。</p>
+        <span class="cn">PIG-BOAT / FAKE ADVISOR</span>
+      </div>
+    </div>
+    <div class="disclaim" style="margin-top:26px">
+      温馨提示：任何政府机构、银行、警方都不会要求你把钱转到「安全账户」，也不会要求你下载屏幕共享软件或把一次性验证码告诉他人。遇到可疑情况，请挂线后自行拨打官方号码核实，或致电 <b style="color:#FF6B5E">18222</b>。
+    </div>
+  </div>
+</section>
+
+<!-- ===== 核心功能 ===== -->
+<section id="core">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="sec-idx">02 / CORE FEATURES</span>
+        <h2>从「被动弹窗」到「主动防护」</h2>
+      </div>
+      <p>三个功能分别解决「不知道是骗」「被逼着转钱」「不小心成了共犯」三类真实困境，每个都可交互体验。</p>
+    </div>
+
+    <!-- 功能一 -->
+    <div class="feature">
+      <div>
+        <span class="tag">FEATURE 01 · AI COPILOT</span>
+        <h3>AI 防诈陪同助手：<br>3 秒给出「骗术剖析报告」</h3>
+        <p>接到可疑电话、WhatsApp 或短信时，直接粘贴对话或截图。原型阶段内容经脱敏提示后送入大模型生成结构化剖析：骗术类型、话术特征、法律口径、正确动作；生产版本将引入端侧脱敏，仅上传匿名化特征向量，符合香港《个人资料（私隐）条例》。</p>
+        <ul class="checks">
+          <li>话术特征匹配：识别「制造恐慌」「切断社交」「限时压迫」等心理操控手法</li>
+          <li>官方口径校验：直接给出「入境处绝不会要求电话转账」这类权威事实</li>
+          <li>一键举报：生成可复制的报案摘要，转交 18222 或就近警署</li>
+          <li>骗术大模型：持续学习香港本地新骗术样本（脱敏后）</li>
+        </ul>
+      </div>
+      <div class="demo">
+        <div class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--muted)">ANALYSIS PIPELINE</div>
+        <div class="steps" style="margin-top:14px">
+          <div class="step on"><span class="k">STEP 1</span><div><b>端侧脱敏</b><br><span style="color:#94A3BC;font-size:13px">姓名、账号、身份证号本地打码，不离机</span></div></div>
+          <div class="step on"><span class="k">STEP 2</span><div><b>特征抽取</b><br><span style="color:#94A3BC;font-size:13px">话术模式 / 联系渠道 / 金额意图 / 情绪施压</span></div></div>
+          <div class="step on"><span class="k">STEP 3</span><div><b>大模型剖析 + 知识库校验</b><br><span style="color:#94A3BC;font-size:13px">对照香港警方与金管局公开防骗口径</span></div></div>
+          <div class="step on"><span class="k">STEP 4</span><div><b>输出报告与动作建议</b><br><span style="color:#94A3BC;font-size:13px">报警 / 挂线 / 核实 / 举报，附一键复制</span></div></div>
+        </div>
+        <a href="#game" class="btn btn--ghost" style="width:100%;justify-content:center">体验识骗训练 →</a>
+      </div>
+    </div>
+
+    <!-- 功能二 -->
+    <div class="feature">
+      <div>
+        <span class="tag">FEATURE 02 · TRUST LOCK</span>
+        <h3>信任人双锁联保：<br>大额转账必须「两人点头」</h3>
+        <p>诈骗分子最怕一件事：你联系外界。港盾在大额转账（学费、半年房租、投资款）时触发「冷静期 + 信任人联保」，把「一个人被逼操作」变成「两个人共同确认」，直接切断洗脑链条。</p>
+        <ul class="checks">
+          <li>阈值可自定义：默认个人账户收款 ≥ 50,000 港元触发</li>
+          <li>信任人可设父母、导师、同学，通过独立授权码确认</li>
+          <li>2 小时冷静期内可随时撤回，撤回不影响信用记录</li>
+          <li>收款方为「已认证机构」（学校、持牌中介）时自动免检</li>
+        </ul>
+      </div>
+      <div class="demo">
+        <div class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--muted)">SIMULATOR · 大额转账</div>
+        <div class="field">
+          <label><span>转账金额（HKD）</span><span class="mono" id="lockAmount">80,000</span></label>
+          <input type="range" id="lockRange" min="1000" max="200000" step="1000" value="80000">
+        </div>
+        <div class="verdict" id="lockVerdict">检测中…</div>
+        <div class="steps" id="lockSteps">
+          <div class="step"><span class="k">01</span><div>系统识别：个人账户收款 · 金额触发阈值</div></div>
+          <div class="step"><span class="k">02</span><div>弹出「冷静期」提示与骗术特征科普</div></div>
+          <div class="step"><span class="k">03</span><div>向信任人（妈妈 / 导师）发送独立授权请求</div></div>
+          <div class="step"><span class="k">04</span><div>双人确认后 2 小时生效，期间可撤回</div></div>
+        </div>
+        <button class="btn btn--red" id="lockRun" style="width:100%;justify-content:center">模拟触发「双锁」流程</button>
+      </div>
+    </div>
+
+    <!-- 功能三 -->
+    <div class="feature">
+      <div>
+        <span class="tag">FEATURE 03 · ACCOUNT HEALTH</span>
+        <h3>户口健康度监测：<br>别让自己成为「傀儡户口」</h3>
+        <p>很多学生直到被冻结账户、收到警方传票，才知道自己借出的户口被用于洗钱。港盾用图计算与行为特征监测账户「快进快出」「夜间高频」「异地 IP 密集交易」，主动预警并推送法律后果。</p>
+        <ul class="checks">
+          <li>洗钱特征行为识别：快进快出、整数金额、多对一归集</li>
+          <li>图数据库分析资金链路：一账户被举报，关联节点动态限额</li>
+          <li>法律风险提示：出借账户可能触犯《有组织及严重罪行条例》《盗窃罪条例》</li>
+          <li>联动工行 AML 黑名单库与香港官方防骗数据库</li>
+        </ul>
+      </div>
+      <div class="demo">
+        <div class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--muted)">ACCOUNT RISK ENGINE · 拖动体验</div>
+        <div class="field">
+          <label><span>快进快出频率</span><span class="mono" id="v1">30%</span></label>
+          <input type="range" id="muleFast" min="0" max="100" value="30">
+        </div>
+        <div class="field">
+          <label><span>夜间（23:00–06:00）高频转账</span><span class="mono" id="v2">20%</span></label>
+          <input type="range" id="muleNight" min="0" max="100" value="20">
+        </div>
+        <div class="field">
+          <label><span>异地 IP / 新设备密集交易</span><span class="mono" id="v3">15%</span></label>
+          <input type="range" id="muleIp" min="0" max="100" value="15">
+        </div>
+        <div class="meter"><i id="muleBar"></i></div>
+        <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted)">
+          <span>HEALTHY</span><span id="muleScore">风险 0 / 100</span><span>CRITICAL</span>
+        </div>
+        <div class="verdict" id="muleVerdict" style="margin-top:14px">账户状态良好</div>
+        <div style="margin-top:12px;font-size:13px;color:#94A3BC;line-height:1.8" id="muleAction">
+          提示：切勿把银行账户、提款卡或一次性验证码借给任何人，包括自称「朋友」的人。
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 技术架构 ===== -->
+<section id="tech" class="light">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="sec-idx">03 / ARCHITECTURE &amp; COMPLIANCE</span>
+        <h2>端云协同 · 图计算 · PDPO 合规</h2>
+      </div>
+      <p>评委关心「技术含量」，也关心「隐私合规」。港盾把两者放进同一张架构图：能在端上做的绝不上传，必须上云的先脱敏、留痕、可审计。</p>
+    </div>
+    <div class="flow">
+      <span>用户端 · 截图/对话</span><em>→</em>
+      <span>端侧 AI · 脱敏与初筛</span><em>→</em>
+      <span>云端大模型 · 深度剖析</span><em>→</em>
+      <span>知识库 · 警方/金管局口径</span><em>→</em>
+      <span>输出报告 + 动作建议</span>
+    </div>
+    <div class="arch">
+      <div class="node">
+        <span class="tag">LAYER 1</span>
+        <h4>端侧 On-Device AI</h4>
+        <p>截图 OCR 与敏感信息脱敏在本机完成；聊天原文不出设备，仅上传匿名化特征向量。响应延迟低，弱网可用，符合 PDPO「收集最少资料」原则。</p>
+      </div>
+      <div class="node">
+        <span class="tag">LAYER 2</span>
+        <h4>云端 LLM 骗术剖析</h4>
+        <p>基于大语言模型的骗术知识引擎，输出结构化报告；结合 RAG 检索香港警方、金管局、入境处的公开防骗口径，避免「AI 编造法律条文」。</p>
+      </div>
+      <div class="node">
+        <span class="tag">LAYER 3</span>
+        <h4>图计算风控网络</h4>
+        <p>图数据库刻画「账户—设备—IP—收款方」关系网络，识别归集与分拆特征；一旦节点被举报，对关联网络动态限额与警示。</p>
+      </div>
+      <div class="node">
+        <span class="tag">DATA</span>
+        <h4>官方数据链路</h4>
+        <p>拟接入警务处「防骗视伏器」、金管局防骗警示资料、工行全球反洗钱名单库，形成「官方 + 银行 + 用户众包」三层情报。</p>
+      </div>
+      <div class="node">
+        <span class="tag">COMPLIANCE</span>
+        <h4>隐私与合规设计</h4>
+        <p>隐私默认设计（Privacy by Design）、用途限定、留存期限、用户可查可删；配合《个人资料（私隐）条例》与银行内部数据治理要求。</p>
+      </div>
+      <div class="node">
+        <span class="tag">TRUST</span>
+        <h4>可解释与可审计</h4>
+        <p>每次判定均给出「为什么是骗术」的依据与来源标注，便于用户理解、便于警方取证、便于内部审计复核。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 小游戏 ===== -->
+<section id="game">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="sec-idx">04 / INTERACTIVE GAME</span>
+        <h2>港盾 · 拆弹行动</h2>
+      </div>
+      <p>12 个真实改编情境，限时决策。答错会累积「威胁值」，连续答对触发连击加成。每题附官方口径解析——这不是小游戏，是一次完整的反诈训练。</p>
+    </div>
+
+    <div class="game-shell">
+      <!-- 开场 -->
+      <div id="gameIntro">
+        <div style="display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center">
+          <div>
+            <h3 style="font-family:var(--serif);font-size:28px;line-height:1.4;margin-bottom:14px">
+              你有 20 秒做决定。<br>真实场景里，骗子只给你 20 秒。
+            </h3>
+            <p style="color:#B9C6DA;font-size:15px">
+              共 12 关，含 4 个「剧本 Boss 关」。每题限时 20 秒，答对得 100 分 + 时间奖励 + 连击加成；
+              答错或超时累积威胁值，威胁值满 100 提前结束。通关后生成你的「防诈能力档案」。
+            </p>
+            <div class="chips" style="margin:22px 0">
+              <span class="tag">限时决策</span><span class="tag">连击加成</span>
+              <span class="tag">官方口径解析</span><span class="tag">能力评级</span>
+            </div>
+            <button class="btn btn--red" id="gameStart" style="font-size:17px;padding:16px 34px">开始拆弹 · 12 题</button>
+          </div>
+          <div style="border:1px solid var(--line);border-radius:6px;padding:22px;background:rgba(255,255,255,.04)">
+            <div class="mono" style="font-size:11px;letter-spacing:.16em;color:var(--muted)">RATING SYSTEM</div>
+            <table style="margin-top:12px">
+              <tr><td>港盾精英</td><td><b>≥ 1100</b></td></tr>
+              <tr><td>金盾</td><td><b>≥ 850</b></td></tr>
+              <tr><td>银盾</td><td><b>≥ 600</b></td></tr>
+              <tr><td>铜盾</td><td><b>&lt; 600</b></td></tr>
+            </table>
+            <p style="font-size:12.5px;color:#94A3BC;margin-top:14px;line-height:1.8">
+              键盘党提示：按数字键 1–4 可直接作答。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 进行中 -->
+      <div id="gamePanel" class="hidden">
+        <div class="hud">
+          <div class="item">进度 PROGRESS<b id="hudIndex">01 / 12</b></div>
+          <div class="item">得分 SCORE<b class="gold" id="hudScore">0</b></div>
+          <div class="item">连击 STREAK<b id="hudStreak">0</b></div>
+          <div class="item">威胁值 THREAT<b class="red" id="hudThreat">0</b></div>
+        </div>
+        <div class="timebar"><i id="timeBar"></i></div>
+        <div class="script" id="qScript"></div>
+        <h3 class="q-title" id="qTitle"></h3>
+        <div class="opts" id="qOptions"></div>
+        <div class="feedback hidden" id="qFeedback"></div>
+        <div style="margin-top:20px;display:flex;gap:12px;justify-content:flex-end">
+          <button class="btn btn--red hidden" id="qNext">下一题 →</button>
+        </div>
+      </div>
+
+      <!-- 结算 -->
+      <div id="gameResult" class="hidden"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 生态合力 ===== -->
+<section id="eco" class="light">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="sec-idx">05 / ECOSYSTEM</span>
+        <h2>单点产品没有力量，<br>生态才是护城河</h2>
+      </div>
+      <p>港盾的定位是「连接器」：把官方权威信息、银行风控能力、高校迎新场景、保险保障产品串成一条防线。以下为拟合作方与切入点。</p>
+    </div>
+    <div class="chips" style="margin-bottom:26px">
+      <span class="chip"><b>官方</b>香港警务处 · 反诈骗协调中心（18222）</span>
+      <span class="chip"><b>官方</b>防骗视伏器 Scameter</span>
+      <span class="chip"><b>监管</b>香港金管局 HKMA</span>
+      <span class="chip"><b>监管</b>个人资料私隐专员公署 PCPD</span>
+      <span class="chip"><b>安全</b>HKCERT 香港网络安全事故协调中心</span>
+      <span class="chip"><b>高校</b>学生事务处 / 国际事务处 / 迎新组委</span>
+      <span class="chip"><b>校园</b>内地学生学者联合会 · 学生会</span>
+      <span class="chip"><b>金融</b>工银亚洲（ICBC Asia）</span>
+      <span class="chip"><b>保障</b>合作保险机构 · 防诈保险</span>
+      <span class="chip"><b>法律</b>大学法律系 / 律师会义务咨询</span>
+    </div>
+    <div class="grid-4">
+      <div class="card">
+        <span class="idx">场景</span>
+        <h3>迎新季批量触达</h3>
+        <p>内地生迎新会、Orientation 摊位、开学讲座：在学生开户、租房、换汇的「高危时间窗」完成第一次教育。</p>
+      </div>
+      <div class="card">
+        <span class="idx">信任</span>
+        <h3>官方口径背书</h3>
+        <p>所有风险提示引用警方与监管公开口径，并在页面显著标注来源，避免「AI 说的」成为新的误导。</p>
+      </div>
+      <div class="card">
+        <span class="idx">闭环</span>
+        <h3>教育—预警—保障</h3>
+        <p>游戏化教育 → 转账前预警 → 事后保险与快速止付，形成可运营的完整用户旅程。</p>
+      </div>
+      <div class="card">
+        <span class="idx">扩展</span>
+        <h3>大湾区跨境联防</h3>
+        <p>港漂的家人在内地、资金在跨境：二期可扩展为跨境家庭联保与两地预警信息同步。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 商业价值 ===== -->
+<section id="biz">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="sec-idx">06 / BUSINESS VALUE</span>
+        <h2>对工银亚洲而言：<br>这不是公益，是获客与活客引擎</h2>
+      </div>
+      <p>大部分参赛作品只讲社会价值。港盾把防诈能力直接翻译成银行关心的三个指标：获客、活跃、交叉销售。</p>
+    </div>
+    <table>
+      <thead><tr><th>价值维度</th><th>具体机制</th><th>可量化指标（建议在 PPT 中替换为你的测算）</th></tr></thead>
+      <tbody>
+        <tr><td><b>获客 Acquisition</b></td><td>以「港漂安全守护」进入高校迎新生态，成为开户首选入口</td><td>迎新覆盖院校数 · 开户转化率 · 获客成本对比</td></tr>
+        <tr><td><b>活客 Retention</b></td><td>防诈助手与拆弹游戏带来高频打开场景，形成日常使用习惯</td><td>月活 · 停留时长 · 功能使用频次</td></tr>
+        <tr><td><b>转化 Cross-Sell</b></td><td>合规学费代缴、房租托管账户、跨境汇款、防诈保险</td><td>中收规模 · 保险转化率 · 存款沉淀</td></tr>
+        <tr><td><b>风控 Risk</b></td><td>图计算识别傀儡户口与可疑资金链路，降低涉诈账户与合规处罚风险</td><td>可疑交易识别率 · 涉诈账户下降率 · 涉诈损失下降</td></tr>
+        <tr><td><b>ESG / CSR</b></td><td>响应监管反诈政策，成为银行业社会责任标杆案例</td><td>媒体报道量 · 联办活动场次 · 覆盖青年数</td></tr>
+      </tbody>
+    </table>
+
+    <div class="timeline" style="margin-top:52px">
+      <div class="tl">
+        <div class="ph">PHASE 01 · 0–6 个月</div>
+        <h4>校园试点</h4>
+        <p>1–2 所高校迎新季落地，上线 AI 助手与拆弹游戏，收集首批用户反馈与骗术样本。</p>
+      </div>
+      <div class="tl">
+        <div class="ph">PHASE 02 · 6–18 个月</div>
+        <h4>全港推广</h4>
+        <p>接入官方数据源，上线信任人双锁与户口健康度，进入更多高校与青年社群。</p>
+      </div>
+      <div class="tl">
+        <div class="ph">PHASE 03 · 18–36 个月</div>
+        <h4>跨境联防</h4>
+        <p>打通大湾区家庭联保、跨境汇款预警与两地反诈信息同步，输出行业标准。</p>
+      </div>
+      <div class="tl">
+        <div class="ph">PHASE 04 · 长期</div>
+        <h4>能力平台化</h4>
+        <p>把识别能力以 API 形式输出给校方、中介、保险与商户，形成反诈能力平台。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 求助资源 ===== -->
+<section id="help" class="light">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <span class="sec-idx">07 / GET HELP NOW</span>
+        <h2>如果此刻你正在被诈骗</h2>
+      </div>
+      <p>先停下来。挂断电话，不要按对方指示操作，联系一位你信任的人，然后按下面的顺序求助。</p>
+    </div>
+    <div class="help">
+      <div class="h">
+        <div class="big">18222</div>
+        <h4>反诈骗协调中心（ADCC）</h4>
+        <p>24 小时防骗咨询热线，可即时查询可疑电话、网址、账户，并提供止付与报案指引。</p>
+      </div>
+      <div class="h">
+        <div class="big">999</div>
+        <h4>紧急报警</h4>
+        <p>如正在发生金钱损失或人身安全风险，立即拨打 999 或前往就近警署报案，保留所有聊天与转账记录。</p>
+      </div>
+      <div class="h">
+        <div class="big">SCAMETER</div>
+        <h4>防骗视伏器</h4>
+        <p>输入电话号码、网址、收款账户或社交账号，查询是否曾被举报为诈骗相关（香港警务处公开工具）。</p>
+      </div>
+    </div>
+    <div class="disclaim" style="margin-top:28px">
+      立即行动清单：① 停止一切转账与屏幕共享；② 保留截图、通话记录、转账凭证；③ 致电 18222 与银行客服申请止付；④ 到警署报案并索取报案编号；⑤ 修改网银密码并通知信任人。
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div>
+      <div class="brand" style="font-size:20px">
+        <svg width="22" height="26" viewBox="0 0 24 28" fill="none" aria-hidden="true">
+          <path d="M12 1.5 22 5.4v8.2c0 6.3-4.1 11.1-10 12.9C6.1 24.7 2 19.9 2 13.6V5.4L12 1.5Z" stroke="#E23A2E" stroke-width="2"/>
+          <path d="M7.4 13.6 10.6 17l6-6.6" stroke="#E7C46A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div>港盾<small>GANG DUN</small></div>
+      </div>
+      <p style="margin-top:16px;max-width:30em">面向在港青年与港漂的 AI 防诈护盾。<br>工行杯参赛作品 · 学生项目原型。</p>
+    </div>
+    <div>
+      <div class="mono" style="font-size:11px;letter-spacing:.16em;color:var(--muted);margin-bottom:12px">QUICK LINKS</div>
+      <p style="line-height:2.2">
+        <a href="#core">核心功能</a><br>
+        <a href="#game">拆弹行动</a><br>
+        <a href="#biz">商业价值</a><br>
+        <a href="#help">求助资源</a>
+      </p>
+    </div>
+    <div class="disclaim">
+      免责声明：本站为比赛概念原型，不代表任何政府机构、执法部门或银行的官方立场；页面所示风险判定为演示用途，不构成法律或投资意见。
+      用户上传的截图/对话可能发送至第三方 AI 服务进行分析，本站不作留存。未经书面授权，本站不使用任何官方徽章或银行商标。数据与案例引用请以官方最新公报为准。
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* =========================================================
+     A. 数据层
+     优先 /api/content（Netlify Functions + Netlify Database）
+     失败 → /data.json 快照 → 再失败 → 降级提示，页面不白屏
+     ========================================================= */
+  var DATA = {
+    scam_samples: [],
+    scam_reports: [],
+    quiz_questions: [],
+    ratings: [],
+    help_resources: [],
+    site_settings: {}
+  };
+
+  function showDataNotice(msg){
+    var el = document.getElementById('dataNotice');
+    if(!el){
+      el = document.createElement('div');
+      el.id = 'dataNotice';
+      el.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:9999;padding:10px 16px;' +
+        'background:#3A1220;color:#FFD9D4;font-size:13px;text-align:center;border-top:1px solid #FF6B5E';
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+  }
+
+  function applyContent(d){
+    DATA.scam_samples   = d.scam_samples   || [];
+    DATA.scam_reports   = d.scam_reports   || [];
+    DATA.quiz_questions = d.quiz_questions || [];
+    DATA.ratings        = d.ratings        || [];
+    DATA.help_resources = d.help_resources || [];
+    DATA.site_settings  = d.site_settings  || {};
+    bindTicker();
+    bindCopilotReport();
+    bindLockTexts();
+    bindRatingsTable();
+    bindHelpCards();
+    updateLock();
+    updateMule();
+  }
+
+  function loadGangDunData(){
+    if(!window.fetch){
+      showDataNotice('当前浏览器版本过旧，部分内容无法加载，建议升级浏览器。');
+      return;
+    }
+    fetch('/api/content', { headers: { 'Accept': 'application/json' } })
+      .then(function(r){ if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(d){ applyContent(d); })
+      .catch(function(){
+        fetch('/data.json', { headers: { 'Accept': 'application/json' } })
+          .then(function(r){ if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+          .then(function(d){ applyContent(d); showDataNotice('数据库暂时不可用，正在显示本地缓存内容。'); })
+          .catch(function(){
+            showDataNotice('内容加载失败：骗术样本、AI 报告与「拆弹行动」暂不可用，请刷新重试。');
+          });
+      });
+  }
+
+  /* ================= 电报条无缝循环 ================= */
+  var ticker = document.getElementById('ticker');
+  if(ticker){ ticker.innerHTML = ticker.innerHTML + ticker.innerHTML; }
+
+  function bindTicker(){
+    if(!ticker) return;
+    var list = DATA.scam_samples;
+    if(!list.length) return;
+    var html = '';
+    list.forEach(function(s){
+      var sp = document.createElement('span');
+      sp.textContent = s.content;
+      html += sp.outerHTML;
+    });
+    ticker.innerHTML = html + html;
+  }
+
+  /* =========================================================
+     1. AI 识破：真实接入 + 示例降级
+     ========================================================= */
+  var cBtn   = document.getElementById('copilotBtn'),
+      cBar   = document.getElementById('copilotBar'),
+      cOut   = document.getElementById('copilotOut'),
+      cScore = document.getElementById('copilotScore'),
+      cFile  = document.getElementById('copilotFile'),
+      cText  = document.getElementById('copilotText'),
+      cPrev  = document.getElementById('copilotPreview');
+
+  var copilotBusy = false;
+  var pickedImage = null;
+  var REPORT = [];
+
+  function bindCopilotReport(){
+    REPORT = DATA.scam_reports.map(function(r){
+      return [r.category, r.content];
+    });
+  }
+
+  /* 复用 .report .row 结构追加一行，全部走 textContent，天然防 XSS */
+  function addRow(label, text){
+    var d = document.createElement('div');
+    d.className = 'row';
+    var b = document.createElement('b'); b.textContent = label;
+    var s = document.createElement('span'); s.textContent = text;
+    d.appendChild(b); d.appendChild(s);
+    cOut.appendChild(d);
+    return d;
+  }
+
+  function setProgress(p, label){
+    if(cBar) cBar.style.width = p + '%';
+    if(cScore) cScore.textContent = label;
+  }
+
+  /* 图片压到最长边 1280px / JPEG，避免超过 Function 请求体积上限 */
+  function compressImage(file, maxEdge, quality){
+    return new Promise(function(res, rej){
+      var fr = new FileReader();
+      fr.onerror = rej;
+      fr.onload = function(){
+        var img = new Image();
+        img.onerror = rej;
+        img.onload = function(){
+          var w = img.naturalWidth, h = img.naturalHeight;
+          var scale = Math.min(1, maxEdge / Math.max(w, h));
+          var cv = document.createElement('canvas');
+          cv.width  = Math.max(1, Math.round(w * scale));
+          cv.height = Math.max(1, Math.round(h * scale));
+          cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+          res(cv.toDataURL('image/jpeg', quality));
+        };
+        img.src = fr.result;
+      };
+      fr.readAsDataURL(file);
+    });
+  }
+
+  if(cFile){
+    cFile.addEventListener('change', function(){
+      var f = cFile.files && cFile.files[0];
+      if(!f){ pickedImage = null; return; }
+      if(!/^image\//.test(f.type)){
+        showDataNotice('请选择图片文件（PNG / JPG / WebP）。');
+        cFile.value = '';
+        return;
+      }
+      if(f.size > 8 * 1024 * 1024){
+        showDataNotice('图片过大，请选择 8MB 以内的截图。');
+        cFile.value = '';
+        return;
+      }
+      compressImage(f, 1280, 0.82).then(function(url){
+        pickedImage = url;
+        if(cPrev){ cPrev.src = url; cPrev.style.display = 'block'; }
+      }).catch(function(){
+        pickedImage = null;
+        showDataNotice('图片读取失败，请换一张再试。');
+      });
+    });
+  }
+
+  function analyze(){
+    if(copilotBusy) return;
+
+    var text = cText ? cText.value.trim() : '';
+    if(!text && !pickedImage){
+      showDataNotice('未输入内容，正在为你演示示例报告。');
+      runDemo();
+      return;
+    }
+    if(text.length > 4000){
+      showDataNotice('文本太长，请精简到 4000 字以内。');
+      return;
+    }
+
+    copilotBusy = true;
+    cOut.innerHTML = '';
+    cBtn.textContent = '分析中…';
+    cBtn.disabled = true;
+    setProgress(18, '上传中…');
+
+    var fakeTimer = setInterval(function(){
+      var w = parseFloat(cBar.style.width) || 18;
+      if(w < 88){ setProgress(w + 4 + Math.random() * 6, '分析中…'); }
+    }, 220);
+
+    fetch('/.netlify/functions/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text, image: pickedImage })
+    })
+      .then(function(res){ return res.json().catch(function(){ return { ok:false }; }); })
+      .then(function(data){
+        clearInterval(fakeTimer);
+        if(data && data.ok && data.report){
+          renderRealReport(data.report);
+        }else{
+          runDemo((data && data.error) || 'AI 服务暂时不可用，已切换到示例报告。');
+        }
+      })
+      .catch(function(){
+        clearInterval(fakeTimer);
+        runDemo('网络异常，AI 服务暂时不可用，已切换到示例报告。');
+      })
+      .then(function(){
+        copilotBusy = false;
+        cBtn.disabled = false;
+      });
+  }
+
+  if(cBtn){ cBtn.addEventListener('click', analyze); }
+
+  function renderRealReport(r){
+    var risk  = r.risk || '中危';
+    var score = typeof r.score === 'number' ? r.score : 50;
+    var color = risk === '高危' ? '#FF6B5E' : (risk === '中危' ? '#E7C46A' : '#3FD0A8');
+
+    setProgress(score, score + ' / 100 · ' + risk);
+    if(cBar) cBar.style.background = 'linear-gradient(90deg,' + color + ',#E23A2E)';
+
+    cOut.innerHTML = '';
+    addRow('结论', r.summary || '信息不足，暂时无法给出结论。');
+    (r.signals || []).forEach(function(s){ addRow('风险特征', s); });
+    (r.advice  || []).forEach(function(s){ addRow('建议动作', s); });
+    addRow('官方口径', '任何政府机构、银行、警方都不会要求你把钱转入「安全账户」。请挂线后拨打 18222 或 999。');
+
+    cBtn.textContent = '重新分析 · 换一段内容';
+  }
+
+  /* 降级：保留原有假动画（示例报告） */
+  function runDemo(msg){
+    if(msg) showDataNotice(msg);
+    if(!REPORT.length){
+      cBtn.textContent = '一键识破 · 生成剖析报告';
+      copilotBusy = false;
+      showDataNotice('AI 剖析报告模板未加载，请刷新重试。');
+      return;
+    }
+    copilotBusy = true;
+    cOut.innerHTML = '';
+    cBtn.textContent = '分析中…';
+    var p = 0;
+    var t = setInterval(function(){
+      p += 9 + Math.random() * 16;
+      if(p >= 100){ p = 100; clearInterval(t); setTimeout(renderDemoReport, 260); }
+      setProgress(p, Math.round(p) + ' %');
+    }, 110);
+  }
+
+  function renderDemoReport(){
+    setProgress(96, '96 / 100 高危');
+    cOut.innerHTML = '';
+    REPORT.forEach(function(row, i){
+      var d = addRow(row[0], row[1]);
+      d.style.animationDelay = (i * 0.12) + 's';
+    });
+    cBtn.textContent = '重新识破 · 换一段对话';
+    copilotBusy = false;
+  }
+
+  /* ================= 2. 信任人双锁 ================= */
+  var lockRange = document.getElementById('lockRange'),
+      lockAmount = document.getElementById('lockAmount'),
+      lockVerdict = document.getElementById('lockVerdict'),
+      lockSteps = document.getElementById('lockSteps'),
+      lockRun = document.getElementById('lockRun');
+  var lockBusy = false, lockTimers = [];
+
+  function fmt(n){ return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+  function bindLockTexts(){
+    var steps = (DATA.site_settings || {}).lock_steps;
+    if(!lockSteps || !steps || !steps.length) return;
+    var els = lockSteps.querySelectorAll('.step');
+    Array.prototype.forEach.call(els, function(el, i){
+      if(steps[i] !== undefined && el.lastElementChild){
+        el.lastElementChild.textContent = steps[i];
+      }
+    });
+  }
+
+  function updateLock(){
+    if(!lockRange) return;
+    var v = parseInt(lockRange.value, 10);
+    lockAmount.textContent = fmt(v);
+
+    var ST = DATA.site_settings || {};
+    var threshold = parseInt(ST.lock_threshold, 10);
+    if(!isNaN(threshold)){
+      if(v >= threshold){
+        lockVerdict.textContent = ST.lock_verdict_triggered || '触发「双锁联保」· 2 小时冷静期';
+        lockVerdict.style.borderColor = 'rgba(226,58,46,.55)';
+        lockVerdict.style.color = '#FF8A7E';
+        lockVerdict.style.background = 'rgba(226,58,46,.10)';
+      }else{
+        lockVerdict.textContent = (ST.lock_verdict_normal || '未触发 · 低于 {n} 港元阈值（仍建议核实收款人身份）')
+          .replace('{n}', fmt(threshold));
+        lockVerdict.style.borderColor = 'rgba(63,208,168,.45)';
+        lockVerdict.style.color = '#3FD0A8';
+        lockVerdict.style.background = 'rgba(63,208,168,.10)';
+      }
+    }
+
+    if(lockSteps){
+      Array.prototype.forEach.call(lockSteps.querySelectorAll('.step'), function(s){
+        s.classList.remove('on');
+      });
+    }
+    lockTimers.forEach(clearTimeout);
+    lockTimers = [];
+    lockBusy = false;
+  }
+
+  if(lockRange){ lockRange.addEventListener('input', updateLock); updateLock(); }
+
+  if(lockRun){
+    lockRun.addEventListener('click', function(){
+      if(lockBusy) return;
+      lockBusy = true;
+      lockRun.textContent = '流程执行中…';
+      var steps = lockSteps.querySelectorAll('.step');
+      Array.prototype.forEach.call(steps, function(s){ s.classList.remove('on'); });
+      lockTimers.forEach(clearTimeout);
+      lockTimers = [];
+      Array.prototype.forEach.call(steps, function(s, i){
+        lockTimers.push(setTimeout(function(){
+          s.classList.add('on');
+          if(i === steps.length - 1){
+            lockRun.textContent = '再模拟一次';
+            lockBusy = false;
+          }
+        }, 500 + i * 750));
+      });
+    });
+  }
+
+  /* ================= 3. 户口健康度 ================= */
+  var mF = document.getElementById('muleFast'),
+      mN = document.getElementById('muleNight'),
+      mI = document.getElementById('muleIp'),
+      mBar = document.getElementById('muleBar'),
+      mScore = document.getElementById('muleScore'),
+      mVerdict = document.getElementById('muleVerdict'),
+      mAction = document.getElementById('muleAction'),
+      v1 = document.getElementById('v1'), v2 = document.getElementById('v2'), v3 = document.getElementById('v3');
+
+  function updateMule(){
+    if(!mF) return;
+    var a = +mF.value, b = +mN.value, c = +mI.value;
+    v1.textContent = a + '%'; v2.textContent = b + '%'; v3.textContent = c + '%';
+
+    var ST = DATA.site_settings || {};
+    var W = ST.health_weights;
+    if(!W) return;
+
+    var score = Math.round(a * W.fast + b * W.night + c * W.ip);
+    mScore.textContent = '风险 ' + score + ' / 100';
+    mBar.style.width = score + '%';
+
+    var L = ST.health_levels || [];
+    for(var i = 0; i < L.length; i++){
+      var lo = (L[i].min === undefined ? -1 : L[i].min);
+      var hi = (L[i].max === undefined ? 999 : L[i].max);
+      if(score < lo || score > hi) continue;
+      mBar.style.background = L[i].color;
+      mVerdict.textContent = L[i].verdict;
+      mVerdict.style.color = L[i].color;
+      mVerdict.style.borderColor = L[i].border;
+      mAction.textContent = L[i].action;
+      break;
+    }
+  }
+
+  if(mF){
+    [mF, mN, mI].forEach(function(el){ el.addEventListener('input', updateMule); });
+    updateMule();
+  }
+
+  /* ================= 4. 小游戏：港盾·拆弹行动 ================= */
+  var QUESTIONS = [];
+
+  var G = { i:0, score:0, streak:0, best:0, threat:0, time:0, total:200, timer:null, locked:false, record:[] };
+
+  var intro = document.getElementById('gameIntro'),
+      panel = document.getElementById('gamePanel'),
+      result = document.getElementById('gameResult'),
+      startBtn = document.getElementById('gameStart'),
+      qScript = document.getElementById('qScript'),
+      qTitle = document.getElementById('qTitle'),
+      qOptions = document.getElementById('qOptions'),
+      qFeedback = document.getElementById('qFeedback'),
+      qNext = document.getElementById('qNext'),
+      timeBar = document.getElementById('timeBar'),
+      hudIndex = document.getElementById('hudIndex'),
+      hudScore = document.getElementById('hudScore'),
+      hudStreak = document.getElementById('hudStreak'),
+      hudThreat = document.getElementById('hudThreat');
+
+  function pad(n){ return n < 10 ? '0' + n : '' + n; }
+
+  function stopTimer(){ if(G.timer){ clearInterval(G.timer); G.timer = null; } }
+
+  function startTimer(seconds){
+    stopTimer();
+    G.time = seconds * 10;
+    G.total = seconds * 10;
+    timeBar.style.width = '100%';
+    G.timer = setInterval(function(){
+      G.time -= 1;
+      if(G.time <= 0){
+        G.time = 0;
+        timeBar.style.width = '0%';
+        stopTimer();
+        choose(-1);
+        return;
+      }
+      timeBar.style.width = (G.time / G.total * 100) + '%';
+    }, 100);
+  }
+
+  function renderQuestion(){
+    var q = QUESTIONS[G.i];
+    G.locked = false;
+    hudIndex.textContent = pad(G.i + 1) + ' / ' + pad(QUESTIONS.length);
+    hudScore.textContent = G.score;
+    hudStreak.textContent = G.streak;
+    hudThreat.textContent = G.threat;
+
+    qScript.innerHTML = '';
+    (q.script || []).forEach(function(row){
+      if(!row || row.length < 2) return;
+      var d = document.createElement('div');
+      d.className = 'line';
+      var s = document.createElement('span'); s.textContent = row[0];
+      var t = document.createElement('span'); t.textContent = row[1];
+      t.style.color = '#CBD7E9'; t.style.fontSize = '14.5px'; t.style.fontFamily = 'var(--sans)';
+      d.appendChild(s); d.appendChild(t);
+      qScript.appendChild(d);
+    });
+
+    qTitle.textContent = q.title;
+
+    qOptions.innerHTML = '';
+    (q.options || []).forEach(function(opt, idx){
+      var b = document.createElement('button');
+      b.className = 'opt';
+      b.type = 'button';
+      var k = document.createElement('span');
+      k.className = 'k'; k.textContent = 'OPTION ' + (idx + 1);
+      var txt = document.createElement('span');
+      txt.textContent = opt.t;
+      b.appendChild(k); b.appendChild(txt);
+      b.addEventListener('click', function(){ choose(idx); });
+      qOptions.appendChild(b);
+    });
+
+    qFeedback.classList.add('hidden');
+    qNext.classList.add('hidden');
+    startTimer(20);
+  }
+
+  function choose(idx){
+    if(G.locked) return;
+    G.locked = true;
+    stopTimer();
+
+    var q = QUESTIONS[G.i];
+    var btns = qOptions.querySelectorAll('.opt');
+    var correctIdx = -1;
+    (q.options || []).forEach(function(o, i){ if(o.ok && correctIdx < 0) correctIdx = i; });
+
+    Array.prototype.forEach.call(btns, function(b, i){
+      if(i === correctIdx){ b.classList.add('right'); }
+      else if(i === idx){ b.classList.add('wrong'); }
+      else { b.classList.add('dim'); }
+    });
+
+    var isRight = (idx === correctIdx);
+    var gained = 0;
+    if(isRight){
+      var speed = Math.round((G.time / G.total) * 60);
+      G.streak += 1;
+      if(G.streak > G.best) G.best = G.streak;
+      var multi = 1 + Math.min(G.streak - 1, 5) * 0.2;
+      gained = Math.round((100 + speed) * multi);
+      G.score += gained;
+      G.record.push({ ok:true, tag:q.tag, title:q.title });
+    }else{
+      G.streak = 0;
+      G.threat += (idx < 0 ? 15 : 25);
+      if(G.threat > 100) G.threat = 100;
+      G.record.push({ ok:false, tag:q.tag, title:q.title });
+    }
+
+    hudScore.textContent = G.score;
+    hudStreak.textContent = G.streak;
+    hudThreat.textContent = G.threat;
+
+    qFeedback.innerHTML = '';
+    var big = document.createElement('div');
+    big.className = 'verdict-big';
+    if(isRight){ big.textContent = '判断正确 · +' + gained + ' 分'; }
+    else if(idx < 0){ big.textContent = '超时！威胁值 +15'; }
+    else { big.textContent = '判断失误 · 威胁值 +25'; }
+
+    var why = document.createElement('div');
+    why.className = 'why'; why.textContent = q.why;
+
+    var law = document.createElement('div');
+    law.className = 'law'; law.textContent = q.law;
+
+    qFeedback.appendChild(big);
+    qFeedback.appendChild(why);
+    qFeedback.appendChild(law);
+    qFeedback.classList.remove('hidden');
+
+    qNext.textContent = (G.threat >= 100 || G.i >= QUESTIONS.length - 1) ? '查看结果 →' : '下一题 →';
+    qNext.classList.remove('hidden');
+    qNext.focus();
+  }
+
+  function next(){
+    if(G.threat >= 100 || G.i >= QUESTIONS.length - 1){
+      endGame();
+      return;
+    }
+    G.i += 1;
+    renderQuestion();
+  }
+
+  function resolveLevel(){
+    if(G.threat >= 100) return { lv:'训练中断', color:'#FF6B5E' };
+    var sorted = (DATA.ratings || []).slice().sort(function(a, b){ return b.min_score - a.min_score; });
+    for(var i = 0; i < sorted.length; i++){
+      if(G.score >= sorted[i].min_score){
+        return { lv: sorted[i].level_name, color: sorted[i].color || '#E7C46A' };
+      }
+    }
+    return { lv:'铜盾', color:'#E0894F' };
+  }
+
+  function hotline(key, fallback){
+    var list = DATA.help_resources || [];
+    for(var i = 0; i < list.length; i++){
+      if(list[i].number === key) return list[i].number;
+    }
+    return fallback;
+  }
+
+  function endGame(){
+    stopTimer();
+    panel.classList.add('hidden');
+    result.classList.remove('hidden');
+
+    var r = resolveLevel();
+    var lv = r.lv;
+    var correct = G.record.filter(function(x){ return x.ok; }).length;
+
+    var html = '';
+    html += '<div class="result">';
+    html += '<div class="seal"><div class="lv">' + lv + '</div><div class="sc">SCORE ' + G.score + '</div></div>';
+    html += '<h3 style="font-family:var(--serif);font-size:28px;margin-bottom:10px">你的防诈能力档案</h3>';
+    html += '<p style="color:#B9C6DA;max-width:34em;margin:0 auto;font-size:15px">最高连击 ' + G.best +
+            ' · 威胁值 ' + G.threat + '% · 答对 ' + correct + ' / ' + QUESTIONS.length + ' 题</p>';
+    html += '<p style="color:#94A3BC;max-width:34em;margin:8px auto 0;font-size:13.5px;line-height:1.9">真实场景里没有「下一题」。如果你或身边的人遇到类似情况，请挂线、停止操作，并拨打 ' +
+            '<b style="color:#FF6B5E">' + hotline('18222', '18222') + '</b> 或 <b style="color:#FF6B5E">' + hotline('999', '999') + '</b>。</p>';
+    html += '<div class="review">';
+    G.record.forEach(function(x, i){
+      html += '<div class="r ' + (x.ok ? 'ok' : 'no') + '"><div class="m">' + (x.ok ? 'PASS' : 'MISS') +
+              '</div><div class="t"><b>' + pad(i + 1) + '</b> · <b>' + x.tag + '</b> · ' + x.title + '</div></div>';
+    });
+    html += '</div>';
+    html += '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">';
+    html += '<button class="btn btn--red" id="againBtn">再玩一次</button>';
+    html += '<button class="btn btn--ghost" id="copyBtn">复制我的战报</button>';
+    html += '</div></div>';
+
+    result.innerHTML = html;
+
+    var again = document.getElementById('againBtn');
+    if(again){
+      again.addEventListener('click', function(){
+        result.classList.add('hidden');
+        intro.classList.remove('hidden');
+        window.scrollTo({ top: document.getElementById('game').offsetTop - 60, behavior: 'smooth' });
+      });
+    }
+
+    var copyBtn = document.getElementById('copyBtn');
+    if(copyBtn){
+      copyBtn.addEventListener('click', function(){
+        var txt = '【港盾 · 拆弹行动】评级：' + lv + '｜得分 ' + G.score + '｜最高连击 ' + G.best +
+                  '｜答对 ' + correct + '/' + QUESTIONS.length +
+                  '。防诈三原则：不轻信、不透露、不转账。可疑请拨 ' + hotline('18222', '18222') + '。';
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(txt).then(function(){
+            copyBtn.textContent = '已复制，去分享吧';
+          }).catch(function(){
+            copyBtn.textContent = '复制失败，请手动选择文本';
+          });
+        }else{
+          copyBtn.textContent = '请手动复制上方文字';
+        }
+      });
+    }
+  }
+
+  /* ============ 小游戏评级表 / 求助资源卡：由数据覆写文本 ============ */
+  function bindRatingsTable(){
+    var rows = document.querySelectorAll('#gameIntro table tr');
+    var list = (DATA.ratings || []).slice().sort(function(a, b){ return b.min_score - a.min_score; });
+    if(!rows.length || list.length < rows.length) return;
+    Array.prototype.forEach.call(rows, function(tr, i){
+      var r = list[i];
+      tr.cells[0].textContent = r.level_name;
+      var b = tr.cells[1].querySelector('b');
+      if(b){
+        b.textContent = (r.min_score > 0)
+          ? ('≥ ' + r.min_score)
+          : ('< ' + list[i - 1].min_score);
+      }
+    });
+  }
+
+  function bindHelpCards(){
+    var cards = document.querySelectorAll('#help .help .h');
+    var list = DATA.help_resources || [];
+    if(!cards.length || list.length < cards.length) return;
+    Array.prototype.forEach.call(cards, function(card, i){
+      var r = list[i];
+      card.querySelector('.big').textContent = r.number;
+      card.querySelector('h4').textContent = r.title;
+      card.querySelector('p').textContent = r.description;
+    });
+  }
+
+  /* ================= 交互绑定 ================= */
+  if(startBtn){
+    startBtn.addEventListener('click', function(){
+      if(!QUESTIONS.length){
+        showDataNotice('题库尚未加载完成，请稍候或刷新后再试。');
+        return;
+      }
+      G = { i:0, score:0, streak:0, best:0, threat:0, time:0, total:200, timer:null, locked:false, record:[] };
+      intro.classList.add('hidden');
+      result.classList.add('hidden');
+      panel.classList.remove('hidden');
+      renderQuestion();
+    });
+  }
+
+  if(qNext){ qNext.addEventListener('click', next); }
+
+  document.addEventListener('keydown', function(e){
+    if(panel.classList.contains('hidden')) return;
+    var n = parseInt(e.key, 10);
+    if(n >= 1 && n <= 4 && !G.locked){ choose(n - 1); }
+  });
+
+  function bindQuestions(){
+    QUESTIONS = (DATA.quiz_questions || []).slice();
+  }
+
+  var _apply = applyContent;
+  applyContent = function(d){ _apply(d); bindQuestions(); };
+
+  loadGangDunData();
+
+})();
+</script>
+</body>
+</html>
