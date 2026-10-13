@@ -69,7 +69,7 @@ async function callMimo(payload, timeoutMs) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${sk-c21i2j5t7eqz5mwnr5n81b4eo3ffbd6nuyz0pmkesqkvzofs}`
+        "Authorization": “Bearer sk-c21i2j5t7eqz5mwnr5n81b4eo3ffbd6nuyz0pmkesqkvzofs”
       },
       body: JSON.stringify(payload),
       signal: ctrl ? ctrl.signal : undefined
@@ -144,15 +144,7 @@ exports.handler = async (event) => {
       return json(413, { ok: false, error: "图片过大，请上传 5MB 以内的截图。" });
     }
   }
-
-  if (!process.env.MIMO_API_KEY) {
-    return json(503, {
-      ok: false,
-      error: "AI 服务未配置密钥，已切换到示例报告。",
-      report: FALLBACK_REPORT
-    });
-  }
-
+  
   // 组装消息：有图带图，没图纯文本
   const userContent = image
     ? [
