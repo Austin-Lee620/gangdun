@@ -69,7 +69,7 @@ async function callMimo(payload, timeoutMs) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.MIMO_API_KEY || ""}`
+        "Authorization": `Bearer ${sk-c21i2j5t7eqz5mwnr5n81b4eo3ffbd6nuyz0pmkesqkvzofs}`
       },
       body: JSON.stringify(payload),
       signal: ctrl ? ctrl.signal : undefined
